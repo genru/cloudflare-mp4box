@@ -1,5 +1,5 @@
 {
-	"name": "express-d1-app",
+	"name": "video-parser-online",
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
@@ -15,5 +15,10 @@
 		"typescript": "^5.5.2",
 		"vitest": "~4.1.0",
 		"wrangler": "^4.131.2"
+	},
+	"dependencies": {
+		"@types/express": "^5.0.6",
+		"express": "^5.2.1",
+		"mp4box": "^2.4.1"
 	}
 }
