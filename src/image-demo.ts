@@ -1,36 +1,36 @@
-// Self-contained developer playground + API reference for the MP4 parse API.
-// Served at GET /demo. Neo-Brutalism style: thick black borders, hard shadows,
+// Self-contained developer playground + API reference for the image info API.
+// Served at GET /image. Neo-Brutalism style: thick black borders, hard shadows,
 // flat vivid colors, heavy uppercase type. Tailwind CDN for layout + vanilla JS.
 // NOTE: this is a TS template literal — avoid backticks and ${ in the content,
 // and write \\ where a single backslash should appear in the output.
 
-export const demoHtml = `<!DOCTYPE html>
+export const imageDemoHtml = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>MP4 Parser API — Inspect MP4 Metadata Online (mp4box.js)</title>
-<meta name="description" content="Free developer API to parse MP4 video metadata online. Send a video URL or raw MP4 bytes and get duration, codecs, resolution, bitrate and per-track info back as JSON. Built with mp4box.js on Cloudflare Workers." />
-<meta name="keywords" content="mp4 parser, mp4 metadata, mp4box.js, video info api, mp4 codec checker, mp4 duration, video bitrate, parse mp4 online, cloudflare workers api" />
-<meta name="author" content="MP4 Parser API" />
+<title>Image Info API — Inspect Image Metadata Online (PNG / JPEG / GIF / WebP)</title>
+<meta name="description" content="Free developer API to parse image metadata online. Send an image URL or raw bytes and get format, dimensions, color type, alpha, animation, frame count and EXIF (make, model, datetime, DPI, orientation, GPS) back as JSON. Built on Cloudflare Workers." />
+<meta name="keywords" content="image info api, image metadata, exif reader, png dimensions, jpeg exif, gif frames, webp info, image size api, parse image online, cloudflare workers api" />
+<meta name="author" content="Image Info API" />
 <meta name="robots" content="index, follow" />
-<meta name="theme-color" content="#FFF7E4" />
-<link rel="canonical" href="https://your-worker.workers.dev/demo" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111111'/><text x='50' y='66' font-size='38' text-anchor='middle' fill='%23FFDE59' font-family='monospace' font-weight='bold'>MP4</text></svg>" />
+<meta name="theme-color" content="#E8F5FF" />
+<link rel="canonical" href="https://your-worker.workers.dev/image" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23111111'/><text x='50' y='66' font-size='34' text-anchor='middle' fill='%2367E8F9' font-family='monospace' font-weight='bold'>IMG</text></svg>" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
-<meta property="og:site_name" content="MP4 Parser API" />
-<meta property="og:title" content="MP4 Parser API — Inspect MP4 Metadata Online" />
-<meta property="og:description" content="Send a video URL or raw MP4 bytes, get duration, codecs, resolution, bitrate and track info as JSON. Free, no auth, powered by mp4box.js on Cloudflare Workers." />
-<meta property="og:url" content="https://your-worker.workers.dev/demo" />
-<meta property="og:image" content="https://placehold.co/1200x630/111111/FFDE59?text=MP4+Parser+API" />
+<meta property="og:site_name" content="Image Info API" />
+<meta property="og:title" content="Image Info API — Inspect Image Metadata Online" />
+<meta property="og:description" content="Send an image URL or raw bytes, get format, dimensions, color type, alpha, animation and EXIF as JSON. Free, no auth, on Cloudflare Workers." />
+<meta property="og:url" content="https://your-worker.workers.dev/image" />
+<meta property="og:image" content="https://placehold.co/1200x630/111111/67E8F9?text=Image+Info+API" />
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="MP4 Parser API — Inspect MP4 Metadata Online" />
-<meta name="twitter:description" content="Send a video URL or raw MP4 bytes, get duration, codecs, resolution, bitrate and track info as JSON. Free, no auth." />
-<meta name="twitter:image" content="https://placehold.co/1200x630/111111/FFDE59?text=MP4+Parser+API" />
+<meta name="twitter:title" content="Image Info API — Inspect Image Metadata Online" />
+<meta name="twitter:description" content="Send an image URL or raw bytes, get format, dimensions, color type, alpha, animation and EXIF as JSON. Free, no auth." />
+<meta name="twitter:image" content="https://placehold.co/1200x630/111111/67E8F9?text=Image+Info+API" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -39,11 +39,11 @@ export const demoHtml = `<!DOCTYPE html>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   :root {
-    --paper: #FFF7E4;
+    --paper: #E8F5FF;
     --ink: #111111;
+    --cyan: #67E8F9;
     --yellow: #FFDE59;
     --pink: #FF6B9D;
-    --cyan: #67E8F9;
     --lime: #BFFF00;
     --purple: #C4B5FD;
     --green: #4ADE80;
@@ -61,7 +61,7 @@ export const demoHtml = `<!DOCTYPE html>
     min-height: 100vh;
     color: var(--ink);
     background-color: var(--paper);
-    background-image: radial-gradient(rgba(17,17,17,0.07) 1.2px, transparent 1.2px);
+    background-image: radial-gradient(rgba(17,17,17,0.06) 1.2px, transparent 1.2px);
     background-size: 22px 22px;
   }
   .card {
@@ -87,7 +87,7 @@ export const demoHtml = `<!DOCTYPE html>
   .t-lime { background: var(--lime); }
   .logo-box {
     background: var(--ink);
-    color: var(--yellow);
+    color: var(--cyan);
     font-family: 'Archivo', sans-serif;
     font-weight: 900;
     font-size: 13px;
@@ -104,7 +104,7 @@ export const demoHtml = `<!DOCTYPE html>
   }
   .marquee {
     background: var(--ink);
-    color: var(--yellow);
+    color: var(--cyan);
     border-top: 3px solid var(--ink);
     border-bottom: 3px solid var(--ink);
     overflow: hidden;
@@ -117,7 +117,7 @@ export const demoHtml = `<!DOCTYPE html>
     font-size: 13px;
     letter-spacing: 0.08em;
     padding: 8px 0;
-    animation: scroll 22s linear infinite;
+    animation: scroll 24s linear infinite;
   }
   .marquee-inner span { padding-right: 24px; }
   @keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
@@ -141,6 +141,7 @@ export const demoHtml = `<!DOCTYPE html>
   }
   .hl { padding: 0 0.18em; border: 3px solid var(--ink); box-shadow: 5px 5px 0 var(--ink); display: inline-block; }
   .hl-pink { background: var(--pink); }
+  .hl-cyan { background: var(--cyan); }
   .endpoint {
     background: var(--ink);
     color: #fff;
@@ -164,7 +165,7 @@ export const demoHtml = `<!DOCTYPE html>
   .btn:hover { transform: translate(2px, 2px); box-shadow: 3px 3px 0 var(--ink); }
   .btn:active { transform: translate(5px, 5px); box-shadow: 0 0 0 var(--ink); }
   .btn:disabled { opacity: .55; transform: none; box-shadow: 5px 5px 0 var(--ink); cursor: progress; }
-  .btn-primary { background: var(--yellow); color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em; }
+  .btn-primary { background: var(--cyan); color: var(--ink); text-transform: uppercase; letter-spacing: 0.04em; }
   .btn-copy {
     background: #fff;
     color: var(--ink);
@@ -187,7 +188,7 @@ export const demoHtml = `<!DOCTYPE html>
   }
   .input-nb:focus {
     outline: none;
-    background: #FFFCEB;
+    background: #F0FBFF;
     box-shadow: 4px 4px 0 var(--ink);
   }
   .tab {
@@ -200,7 +201,7 @@ export const demoHtml = `<!DOCTYPE html>
     cursor: pointer;
   }
   .tab:hover { color: var(--ink); transform: translate(1px, 1px); box-shadow: 2px 2px 0 var(--ink); }
-  .tab.active { background: var(--yellow); color: var(--ink); }
+  .tab.active { background: var(--cyan); color: var(--ink); }
   .codeblock {
     background: var(--code-bg);
     border: 3px solid var(--ink);
@@ -230,8 +231,8 @@ export const demoHtml = `<!DOCTYPE html>
   @keyframes spin { to { transform: rotate(360deg); } }
   .fade-in { animation: fade .25s ease both; }
   @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .dropzone { border-style: dashed; background: #FFF3C4; }
-  .dropzone.drag { background: var(--lime); }
+  .dropzone { border-style: dashed; background: #D6F1FF; }
+  .dropzone.drag { background: var(--cyan); }
   ::-webkit-scrollbar { height: 8px; width: 8px; }
   ::-webkit-scrollbar-thumb { background: var(--ink); border-radius: 8px; }
 
@@ -244,7 +245,6 @@ export const demoHtml = `<!DOCTYPE html>
   .status-pill { border-radius: 8px; }
   .tag, .btn-copy { border-radius: 999px; }
   .method-get { background: var(--cyan); }
-  body { background-image: radial-gradient(rgba(17,17,17,0.05) 1.2px, transparent 1.2px); }
 
   /* Lighter shadows */
   .card { box-shadow: 4px 4px 0 var(--shadow); }
@@ -264,14 +264,14 @@ export const demoHtml = `<!DOCTYPE html>
 {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "MP4 Parser API",
-  "url": "https://your-worker.workers.dev/demo",
-  "description": "Free developer API to parse MP4 video metadata online. Send a video URL or raw MP4 bytes and get duration, codecs, resolution, bitrate and per-track info back as JSON.",
+  "name": "Image Info API",
+  "url": "https://your-worker.workers.dev/image",
+  "description": "Free developer API to parse image metadata online. Send an image URL or raw bytes and get format, dimensions, color type, alpha, animation and EXIF back as JSON.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Any",
   "browserRequirements": "Requires JavaScript",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "featureList": "Parse MP4 from URL or raw bytes, streaming moov early-stop, per-track codec/resolution/bitrate/sample info, JSON API, GET and POST endpoints, no authentication"
+  "featureList": "Parse PNG/JPEG/GIF/WebP from URL or raw bytes, Range head-probe with early-stop, dimensions, color type, alpha, animation/frame count, EXIF (make, model, datetime, DPI, orientation, GPS), JSON API, GET and POST endpoints, no authentication"
 }
 </script>
 </head>
@@ -279,38 +279,38 @@ export const demoHtml = `<!DOCTYPE html>
   <nav style="background:#fff;border-bottom:3px solid var(--ink)" class="sticky top-0 z-20" aria-label="Site">
     <div class="max-w-6xl mx-auto px-5 py-3 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <span class="logo-box">MP4</span>
-        <span class="display font-black text-sm uppercase tracking-tight">Parse API</span>
+        <span class="logo-box">IMG</span>
+        <span class="display font-black text-sm uppercase tracking-tight">Info API</span>
       </div>
       <div class="hidden sm:flex items-center gap-2">
-        <span class="tag t-cyan mono">mp4box.js</span>
+        <span class="tag t-cyan mono">image-size</span>
         <span class="tag t-purple mono">Cloudflare Workers</span>
       </div>
     </div>
   </nav>
 
   <div class="marquee">
-    <div class="marquee-inner"><span>MP4BOX.JS ✦ CLOUDFLARE WORKERS ✦ STREAMING PARSE ✦ MOOV EARLY-STOP ✦ URL OR RAW BYTES ✦ 200MB CAP ✦ EDGE-FAST ✦</span><span>MP4BOX.JS ✦ CLOUDFLARE WORKERS ✦ STREAMING PARSE ✦ MOOV EARLY-STOP ✦ URL OR RAW BYTES ✦ 200MB CAP ✦ EDGE-FAST ✦</span></div>
+    <div class="marquee-inner"><span>IMAGE-SIZE ✦ CLOUDFLARE WORKERS ✦ RANGE HEAD-PROBE ✦ EARLY-STOP ✦ EXIF ✦ PNG · JPEG · GIF · WEBP ✦ URL OR RAW BYTES ✦ EDGE-FAST ✦</span><span>IMAGE-SIZE ✦ CLOUDFLARE WORKERS ✦ RANGE HEAD-PROBE ✦ EARLY-STOP ✦ EXIF ✦ PNG · JPEG · GIF · WEBP ✦ URL OR RAW BYTES ✦ EDGE-FAST ✦</span></div>
   </div>
 
   <header class="max-w-6xl mx-auto px-5 pt-12 pb-10 relative">
     <span class="sticker t-lime hidden md:inline-block" style="top:18px;right:24px">Free ✦ No auth</span>
-    <h1 class="hero-h mb-4">MP4 metadata<br/>as an <span class="hl hl-pink">HTTP API</span></h1>
+    <h1 class="hero-h mb-4">Image metadata<br/>as an <span class="hl hl-cyan">HTTP API</span></h1>
     <p class="text-sm max-w-2xl" style="color:var(--muted)">
-      Stream an MP4 — from a URL or raw bytes — into mp4box.js and get structured metadata back.
-      Parsing stops as soon as the <code class="mono text-xs px-1.5 py-0.5" style="background:var(--ink);color:var(--yellow)">moov</code> atom is found, so it stays fast and memory-efficient on the edge.
+      Send an image — from a URL or raw bytes — and get format, dimensions, color type, alpha, animation and EXIF back.
+      Image headers always sit at the start, so only a small <code class="mono text-xs px-1.5 py-0.5" style="background:var(--ink);color:var(--cyan)">Range</code> head is fetched and streaming stops early — fast for any file size.
     </p>
     <div class="endpoint mono mt-6 px-4 py-3.5 flex items-center gap-3 text-sm flex-wrap">
       <span class="method-badge mono text-xs px-2.5 py-1">POST</span>
-      <span class="text-sm font-semibold">/api/parse</span>
-      <span class="hidden md:inline text-xs" style="color:#9CA3AF">· Accept: application/json | video/mp4 · Returns: application/json</span>
-      <button class="btn-copy copy-btn mono ml-auto px-2.5 py-1.5" data-copy="POST /api/parse">Copy</button>
+      <span class="text-sm font-semibold">/api/image</span>
+      <span class="hidden md:inline text-xs" style="color:#9CA3AF">· Accept: application/json | image/png | image/jpeg | image/gif | image/webp · Returns: application/json</span>
+      <button class="btn-copy copy-btn mono ml-auto px-2.5 py-1.5" data-copy="POST /api/image">Copy</button>
     </div>
     <div class="endpoint mono mt-3 px-4 py-3.5 flex items-center gap-3 text-sm flex-wrap">
       <span class="method-badge method-get mono text-xs px-2.5 py-1">GET</span>
-      <span class="text-sm font-semibold">/api/parse?url=&lt;video-url&gt;</span>
+      <span class="text-sm font-semibold">/api/image?url=&lt;image-url&gt;</span>
       <span class="hidden md:inline text-xs" style="color:#9CA3AF">· URL mode only — quick checks, no body needed</span>
-      <button class="btn-copy copy-btn mono ml-auto px-2.5 py-1.5" data-copy="GET /api/parse?url=">Copy</button>
+      <button class="btn-copy copy-btn mono ml-auto px-2.5 py-1.5" data-copy="GET /api/image?url=">Copy</button>
     </div>
   </header>
 
@@ -329,7 +329,7 @@ export const demoHtml = `<!DOCTYPE html>
               <span class="tag t-lime mono">QUICKEST</span>
               <span class="text-sm font-bold">GET with query param</span>
             </div>
-            <pre class="codeblock p-4 mono">GET /api/parse?url=https://example.com/video.mp4</pre>
+            <pre class="codeblock p-4 mono">GET /api/image?url=https://example.com/image.png</pre>
           </div>
 
           <div>
@@ -337,10 +337,10 @@ export const demoHtml = `<!DOCTYPE html>
               <span class="tag t-cyan mono">MODE 1</span>
               <span class="text-sm font-bold">Parse from URL</span>
             </div>
-            <pre class="codeblock p-4 mono">POST /api/parse
+            <pre class="codeblock p-4 mono">POST /api/image
 Content-Type: application/json
 
-{ "url": "https://example.com/video.mp4" }</pre>
+{ "url": "https://example.com/image.png" }</pre>
           </div>
 
           <div>
@@ -348,37 +348,39 @@ Content-Type: application/json
               <span class="tag t-pink mono">MODE 2</span>
               <span class="text-sm font-bold">Parse from raw bytes</span>
             </div>
-            <pre class="codeblock p-4 mono">POST /api/parse
-Content-Type: video/mp4
+            <pre class="codeblock p-4 mono">POST /api/image
+Content-Type: image/png
 
-&lt;raw MP4 bytes as the request body&gt;</pre>
+&lt;raw image bytes as the request body&gt;</pre>
           </div>
         </div>
       </div>
 
       <div class="card p-5">
         <h2 class="card-title t-yellow mb-3">Response</h2>
-        <p class="text-xs mb-3" style="color:var(--muted)">Example for a 10s clip with one video, one audio and one text track.</p>
+        <p class="text-xs mb-3" style="color:var(--muted)">Example for a 1280×720 PNG with EXIF (camera + GPS).</p>
         <pre class="codeblock p-4 mono">{
   "success": true,
   "source": "url",
+  "cache": "MISS",
   "info": {
-    "duration": 10.026667,
-    "brands": ["mp42", "isom", "avc1"],
-    "mime": "video/mp4; codecs=\\"avc1.4d400c,mp4a.40.2\\"",
-    "isQuickTime": false,
-    "overallBitrate": 621714.86,
-    "timescale": 90000,
-    "fragmented": false,
-    "progressive": false,
-    "tracks": [
-      { "id": 1, "type": "video", "codec": "avc1.4d400c",
-        "width": 320, "height": 240, "bitrate": 51472,
-        "timescale": 90000, "nb_samples": 250, "language": "und" },
-      { "id": 2, "type": "audio", "codec": "mp4a.40.2",
-        "sampleRate": 44100, "channelCount": 1, "bitrate": 70303,
-        "timescale": 48000, "nb_samples": 45, "language": "und" }
-    ]
+    "format": "png",
+    "mime": "image/png",
+    "width": 1280,
+    "height": 720,
+    "bitDepth": 8,
+    "colorType": "rgba",
+    "hasAlpha": true,
+    "byteSize": 482133,
+    "exif": {
+      "make": "Canon",
+      "model": "Canon EOS 5D",
+      "datetime": "2024:01:02 03:04:05",
+      "orientation": 1,
+      "dpiX": 72,
+      "dpiY": 72,
+      "gps": { "latitude": 37.7749, "longitude": -122.4194 }
+    }
   }
 }</pre>
 
@@ -386,21 +388,21 @@ Content-Type: video/mp4
         <div class="space-y-2 text-xs mono">
           <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">success</span><span class="field-type">boolean</span><span style="color:var(--muted)">— request succeeded</span></div>
           <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">source</span><span class="field-type">"url" | "body"</span><span style="color:var(--muted)">— which input mode was used</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.duration</span><span class="field-type">number</span><span style="color:var(--muted)">— duration in seconds</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.brands</span><span class="field-type">string[]</span><span style="color:var(--muted)">— major + compatible brands</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.mime</span><span class="field-type">string</span><span style="color:var(--muted)">— MIME type with codecs parameter</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.isQuickTime</span><span class="field-type">boolean</span><span style="color:var(--muted)">— QuickTime brand detected</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.overallBitrate</span><span class="field-type">number</span><span style="color:var(--muted)">— combined bitrate, bits/s</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.timescale</span><span class="field-type">number</span><span style="color:var(--muted)">— movie timescale</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.fragmented / progressive</span><span class="field-type">boolean</span><span style="color:var(--muted)">— fMP4 / progressive download</span></div>
-          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.tracks[]</span><span class="field-type">TrackInfo[]</span><span style="color:var(--muted)">— per-track details</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">cache</span><span class="field-type">"HIT" | "MISS"</span><span style="color:var(--muted)">— URL mode only, KV cache state</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.format</span><span class="field-type">"png" | "jpeg" | "gif" | "webp"</span><span style="color:var(--muted)">— detected from magic bytes</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.mime</span><span class="field-type">string</span><span style="color:var(--muted)">— e.g. image/png</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.width / height</span><span class="field-type">number</span><span style="color:var(--muted)">— pixel dimensions</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.bitDepth / colorType</span><span class="field-type">number / string</span><span style="color:var(--muted)">— PNG / JPEG detail</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.hasAlpha</span><span class="field-type">boolean</span><span style="color:var(--muted)">— alpha channel present</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.animated / frameCount</span><span class="field-type">boolean / number</span><span style="color:var(--muted)">— GIF / animated WebP</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.byteSize</span><span class="field-type">number</span><span style="color:var(--muted)">— total size (remote, from headers)</span></div>
+          <div class="schema-row flex gap-3 flex-wrap"><span class="field-name">info.exif</span><span class="field-type">object</span><span style="color:var(--muted)">— make, model, datetime, dpi, orientation, gps</span></div>
         </div>
 
         <div class="codeblock mt-4 p-4 text-xs mono">
-          <div class="mb-1.5 font-bold" style="color:var(--yellow)">TrackInfo</div>
-          <div style="color:#9CA3AF">id · type ("video" | "audio" | "subtitles" | "metadata" | "other") · codec · bitrate · timescale · nb_samples · language · name</div>
-          <div class="mt-1.5"><span class="jk">video tracks:</span> <span style="color:#9CA3AF">width, height</span></div>
-          <div class="mt-1"><span class="jk">audio tracks:</span> <span style="color:#9CA3AF">sampleRate, channelCount</span></div>
+          <div class="mb-1.5 font-bold" style="color:var(--cyan)">Exif</div>
+          <div style="color:#9CA3AF">make · model · datetime · orientation (1–8) · dpiX · dpiY · gps { latitude, longitude }</div>
+          <div class="mt-1.5"><span class="jk">sources:</span> <span style="color:#9CA3AF">JPEG APP1 / PNG eXIf / WebP EXIF chunks</span></div>
         </div>
       </div>
 
@@ -408,8 +410,8 @@ Content-Type: video/mp4
         <h2 class="card-title t-pink mb-4">Errors</h2>
         <div class="space-y-2.5 text-xs mono">
           <div class="flex items-center gap-3"><span class="status-pill status-4 px-2 py-0.5">400</span><span style="color:var(--muted)">Missing or invalid url; non-http(s) scheme</span></div>
-          <div class="flex items-center gap-3"><span class="status-pill status-4 px-2 py-0.5">413</span><span style="color:var(--muted)">Input exceeded the 200MB stream cap</span></div>
-          <div class="flex items-center gap-3"><span class="status-pill status-4 px-2 py-0.5">422</span><span style="color:var(--muted)">Not an MP4, or moov atom not found</span></div>
+          <div class="flex items-center gap-3"><span class="status-pill status-4 px-2 py-0.5">413</span><span style="color:var(--muted)">Input exceeded the size cap (head probe / full fallback)</span></div>
+          <div class="flex items-center gap-3"><span class="status-pill status-4 px-2 py-0.5">422</span><span style="color:var(--muted)">Not a supported image, or dimensions unreadable</span></div>
           <div class="flex items-center gap-3"><span class="status-pill status-5 px-2 py-0.5">502</span><span style="color:var(--muted)">Upstream URL unreachable or non-200</span></div>
           <div class="flex items-center gap-3"><span class="status-pill status-5 px-2 py-0.5">500</span><span style="color:var(--muted)">Internal error</span></div>
         </div>
@@ -429,17 +431,17 @@ Content-Type: video/mp4
           <div class="relative">
             <button class="btn-copy copy-btn mono absolute top-2 right-2 px-2.5 py-1.5" data-copy-target="curl-code">Copy</button>
             <pre id="curl-code" class="codeblock p-4 mono"># quick GET (URL mode only)
-curl 'https://your-worker.workers.dev/api/parse?url=https://example.com/video.mp4'
+curl 'https://your-worker.workers.dev/api/image?url=https://example.com/image.png'
 
 # from a URL
-curl -X POST https://your-worker.workers.dev/api/parse \\
+curl -X POST https://your-worker.workers.dev/api/image \\
   -H 'Content-Type: application/json' \\
-  -d '{"url": "https://example.com/video.mp4"}'
+  -d '{"url": "https://example.com/image.png"}'
 
 # from raw bytes
-curl -X POST https://your-worker.workers.dev/api/parse \\
-  -H 'Content-Type: video/mp4' \\
-  --data-binary @video.mp4</pre>
+curl -X POST https://your-worker.workers.dev/api/image \\
+  -H 'Content-Type: image/png' \\
+  --data-binary @image.png</pre>
           </div>
         </div>
 
@@ -447,20 +449,20 @@ curl -X POST https://your-worker.workers.dev/api/parse \\
           <div class="relative">
             <button class="btn-copy copy-btn mono absolute top-2 right-2 px-2.5 py-1.5" data-copy-target="js-code">Copy</button>
             <pre id="js-code" class="codeblock p-4 mono">// quick GET (URL mode only)
-const res0 = await fetch('/api/parse?url=' + encodeURIComponent(videoUrl));
+const res0 = await fetch('/api/image?url=' + encodeURIComponent(imageUrl));
 
 // from a URL
-const res = await fetch('/api/parse', {
+const res = await fetch('/api/image', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ url: videoUrl }),
+  body: JSON.stringify({ url: imageUrl }),
 });
 const { success, info } = await res.json();
 
 // from a &lt;input type="file"&gt; File/Blob
-const res2 = await fetch('/api/parse', {
+const res2 = await fetch('/api/image', {
   method: 'POST',
-  headers: { 'Content-Type': 'video/mp4' },
+  headers: { 'Content-Type': file.type || 'image/png' },
   body: file,
 });</pre>
           </div>
@@ -473,23 +475,23 @@ const res2 = await fetch('/api/parse', {
 
 # quick GET (URL mode only)
 resp = requests.get(
-    "https://your-worker.workers.dev/api/parse",
-    params={"url": "https://example.com/video.mp4"},
+    "https://your-worker.workers.dev/api/image",
+    params={"url": "https://example.com/image.png"},
 )
 
 # from a URL
 resp = requests.post(
-    "https://your-worker.workers.dev/api/parse",
-    json={"url": "https://example.com/video.mp4"},
+    "https://your-worker.workers.dev/api/image",
+    json={"url": "https://example.com/image.png"},
 )
 info = resp.json()["info"]
 
 # from raw bytes
-with open("video.mp4", "rb") as f:
+with open("image.png", "rb") as f:
     resp = requests.post(
-        "https://your-worker.workers.dev/api/parse",
+        "https://your-worker.workers.dev/api/image",
         data=f,
-        headers={"Content-Type": "video/mp4"},
+        headers={"Content-Type": "image/png"},
     )</pre>
           </div>
         </div>
@@ -500,7 +502,7 @@ with open("video.mp4", "rb") as f:
     <section class="lg:col-span-2 lg:sticky lg:top-20 space-y-6 min-w-0" aria-label="Live playground">
       <div class="card p-5 relative">
         <span class="sticker t-lime" style="top:-14px;right:-10px;transform:rotate(6deg)">Live</span>
-        <h2 class="card-title t-lime mb-4">Try it live</h2>
+        <h2 class="card-title t-cyan mb-4">Try it live</h2>
 
         <div class="flex gap-1.5 mb-4">
           <button id="tabUrl" class="tab active mono text-xs px-3 py-1.5">URL</button>
@@ -508,14 +510,14 @@ with open("video.mp4", "rb") as f:
         </div>
 
         <div id="urlPanel">
-          <input id="urlInput" type="url" spellcheck="false" placeholder="https://example.com/video.mp4"
+          <input id="urlInput" type="url" spellcheck="false" placeholder="https://example.com/image.png"
             class="input-nb mono w-full px-3.5 py-2.5 text-xs" />
         </div>
         <div id="filePanel" class="hidden">
           <label id="dropzone" class="dropzone input-nb flex flex-col items-center justify-center gap-1.5 px-4 py-7 cursor-pointer text-center">
-            <span id="dropLabel" class="text-xs font-medium" style="color:var(--muted)">Drop an MP4 here, or click to browse</span>
+            <span id="dropLabel" class="text-xs font-medium" style="color:var(--muted)">Drop an image here, or click to browse</span>
             <span id="fileMeta" class="mono text-xs hidden font-bold"></span>
-            <input id="fileInput" type="file" accept="video/mp4,.mp4" class="hidden" />
+            <input id="fileInput" type="file" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" class="hidden" />
           </label>
         </div>
 
@@ -552,8 +554,8 @@ with open("video.mp4", "rb") as f:
   </main>
 
   <footer class="max-w-6xl mx-auto px-5 pb-10 text-xs font-semibold" style="color:var(--muted)">
-    <span class="mono">POST /api/parse</span> · powered by
-    <a href="https://github.com/gpac/mp4box.js" target="_blank" rel="noopener noreferrer" class="mono" style="color:var(--accent);text-decoration:none">mp4box.js</a>
+    <span class="mono">POST /api/image</span> · powered by
+    <a href="https://github.com/image-size/image-size" target="_blank" rel="noopener noreferrer" class="mono" style="color:var(--ink);text-decoration:none">image-size</a>
     on Cloudflare Workers
   </footer>
 
@@ -619,20 +621,20 @@ with open("video.mp4", "rb") as f:
 
   // ---------- request preview ----------
   function buildCurl() {
-    var base = location.origin + '/api/parse';
+    var base = location.origin + '/api/image';
     if (mode === 'url') {
-      var url = $('urlInput').value.trim() || 'https://example.com/video.mp4';
+      var url = $('urlInput').value.trim() || 'https://example.com/image.png';
       return "curl -X POST '" + base + "' \\\n  -H 'Content-Type: application/json' \\\n  -d '" + JSON.stringify({ url: url }) + "'";
     }
-    var name = ($('fileInput').files[0] && $('fileInput').files[0].name) || 'video.mp4';
-    return "curl -X POST '" + base + "' \\\n  -H 'Content-Type: video/mp4' \\\n  --data-binary @" + name;
+    var name = ($('fileInput').files[0] && $('fileInput').files[0].name) || 'image.png';
+    return "curl -X POST '" + base + "' \\\n  -H 'Content-Type: image/png' \\\n  --data-binary @" + name;
   }
   function updatePreview() {
     $('reqPreview').textContent = buildCurl();
     var link = $('getLink');
     var url = $('urlInput').value.trim();
     if (mode === 'url' && url) {
-      link.href = location.origin + '/api/parse?url=' + encodeURIComponent(url);
+      link.href = location.origin + '/api/image?url=' + encodeURIComponent(url);
       link.classList.remove('hidden');
       link.classList.add('block');
     } else {
@@ -751,7 +753,7 @@ with open("video.mp4", "rb") as f:
     try {
       var resp;
       if (mode === 'url') {
-        resp = await fetch('/api/parse', {
+        resp = await fetch('/api/image', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ url: $('urlInput').value.trim() }),
@@ -759,13 +761,13 @@ with open("video.mp4", "rb") as f:
       } else {
         var file = $('fileInput').files[0];
         if (!file) {
-          renderResponse(0, 0, 'Choose an MP4 file first.', null);
+          renderResponse(0, 0, 'Choose an image file first.', null);
           setLoading(false);
           return;
         }
-        resp = await fetch('/api/parse', {
+        resp = await fetch('/api/image', {
           method: 'POST',
-          headers: { 'Content-Type': 'video/mp4' },
+          headers: { 'Content-Type': file.type || 'image/png' },
           body: file,
         });
       }

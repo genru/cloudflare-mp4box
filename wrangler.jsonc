@@ -4,7 +4,7 @@
  */
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "express-d1-app",
+	"name": "mp4box",
 	"main": "src/index.ts",
 	"compatibility_date": "2026-09-11",
 	"observability": {
@@ -42,4 +42,16 @@
 	 * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
 	 */
 	// "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
+	/**
+	 * KV namespace used to cache parsed MP4 metadata for URL-mode requests.
+	 * Create a real namespace for deployment with:  npx wrangler kv namespace create mp4_cache
+	 * then replace the id below with the one returned. (Local `wrangler dev --local`
+	 * simulates KV without a real namespace, so the placeholder id works for local runs.)
+	 */
+	"kv_namespaces": [
+		{
+			"binding": "mp4_cache",
+			"id": "f0f07ceb690a4b2e9fab38e38d603a9b"
+		}
+	],
 }

@@ -19,6 +19,7 @@
 	"dependencies": {
 		"@types/express": "^5.0.6",
 		"express": "^5.2.1",
+		"image-size": "^2.0.4",
 		"mp4box": "^2.4.1"
 	}
 }

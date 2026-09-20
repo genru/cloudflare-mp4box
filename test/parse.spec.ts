@@ -112,3 +112,30 @@ describe("mp4 parse API (HTTP)", () => {
 		expect(data.success).toBe(false);
 	});
 });
+
+describe("kv caching (URL mode)", () => {
+	// Uses a small range-supporting public file; validates the 10-minute KV cache
+	// skips the remote fetch on a repeat request. Network-dependent, so it is
+	// skipped automatically if the upstream is unreachable.
+	const url =
+		"https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4";
+
+	it("caches a parsed URL and returns HIT on repeat", async () => {
+		const r1 = await SELF.fetch(`http://localhost/api/parse?url=${url}`, {
+			redirect: "follow",
+		});
+		if (r1.status !== 200) {
+			console.warn("Skipping cache test: upstream unreachable");
+			return;
+		}
+		const d1 = (await r1.json()) as { cache?: string; info: { duration: number } };
+		expect(d1.cache).toBe("MISS");
+
+		const r2 = await SELF.fetch(`http://localhost/api/parse?url=${url}`, {
+			redirect: "follow",
+		});
+		const d2 = (await r2.json()) as { cache?: string; info: { duration: number } };
+		expect(d2.cache).toBe("HIT");
+		expect(d2.info.duration).toBe(d1.info.duration);
+	}, 60000);
+});
