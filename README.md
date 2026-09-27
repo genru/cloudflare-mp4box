@@ -244,15 +244,88 @@ Supported formats: **PNG, JPEG, GIF, WebP**. `exif` is populated where present
 (JPEG APP1, PNG `eXIf`, WebP `EXIF`). Errors mirror the video API
 (`400`/`413`/`422`/`502`/`500`); the isolated front page is served at `GET /image`.
 
+## Audio metadata API (zero-dependency parser on Cloudflare Workers)
+
+A sibling endpoint that parses audio metadata — format, codec, duration,
+bitrate, sample rate, channel count, bit depth and tags (title, artist, album,
+albumArtist, year, genre, track, comment) — from a URL or raw bytes. Like the
+image API it only fetches a small `Range` head (512KB); two extras:
+
+- **OGG duration tail-probe**: OGG durations come from the last page's granule
+  position, so a tiny 256KB tail `Range` is fetched when the server supports it.
+- **M4A moov probing**: M4A/MP4-family files are parsed with the same
+  mp4box.js head/tail `moov` probing strategy as the video API.
+
+### `GET /api/audio?url=<audio-url>`
+
+```bash
+curl "https://<your-worker>/api/audio?url=https://example.com/song.mp3"
+```
+
+### `POST /api/audio`
+
+```bash
+# URL mode
+curl -X POST https://<your-worker>/api/audio \
+  -H 'Content-Type: application/json' \
+  -d '{"url":"https://example.com/song.mp3"}'
+
+# File mode — raw audio bytes
+curl -X POST https://<your-worker>/api/audio \
+  -H 'Content-Type: audio/mpeg' \
+  --data-binary @song.mp3
+```
+
+### Response
+
+```json
+{
+  "success": true,
+  "source": "url",
+  "cache": "MISS",
+  "info": {
+    "format": "mp3",
+    "mime": "audio/mpeg",
+    "codec": "mp3",
+    "duration": 213.504,
+    "bitrate": 320000,
+    "sampleRate": 44100,
+    "channelCount": 2,
+    "byteSize": 8547321,
+    "tags": {
+      "title": "Blue in Green",
+      "artist": "Miles Davis",
+      "album": "Kind of Blue",
+      "year": "1959",
+      "genre": "Jazz",
+      "track": "3/5"
+    }
+  }
+}
+```
+
+Supported formats: **MP3, WAV, FLAC, OGG (Vorbis/Opus), M4A**. `tags` are read
+from ID3v2/ID3v1 (MP3), LIST INFO (WAV) and Vorbis comments (FLAC/OGG/Opus).
+MP3 `duration` is a CBR estimate from bitrate × size; OGG `duration` needs a
+Range-capable upstream. Errors mirror the other APIs; the isolated front page
+is served at `GET /audio`.
+
 ## Project structure
 
 ```
 src/
   index.ts        # Express routes + URL fetch orchestration (Range probing / KV cache)
   mp4-parser.ts   # mp4box.js streaming parse, normalize, Range-probe helpers
+  image-parser.ts # PNG/JPEG/GIF/WebP metadata + EXIF parser
+  images.ts       # /api/image router (Range head-probe, KV cache)
+  audio-parser.ts # MP3/WAV/FLAC/OGG metadata parser (M4A reuses mp4box)
+  audios.ts       # /api/audio router (head/tail probes, KV cache)
   demo.ts         # In-browser tester page served at /
+  image-demo.ts   # Image playground page served at /image
+  audio-demo.ts   # Audio playground page served at /audio
 test/
   parse.spec.ts   # vitest cases
+  image.spec.ts   # image parser cases
 wrangler.jsonc    # Worker config + KV binding
 ```
 

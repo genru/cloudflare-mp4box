@@ -14,6 +14,8 @@ import {
 import { demoHtml } from "./demo";
 import { imageDemoHtml } from "./image-demo";
 import { imageRouter } from "./images";
+import { audioDemoHtml } from "./audio-demo";
+import { audioRouter } from "./audios";
 
 const app = express();
 
@@ -37,6 +39,14 @@ app.get("/image", (_req, res) => {
 
 // Image metadata API: /api/image?url= (GET) and POST /api/image.
 app.use("/api/image", imageRouter);
+
+// Isolated front page for the audio info fetcher (served as HTML).
+app.get("/audio", (_req, res) => {
+	res.type("html").send(audioDemoHtml);
+});
+
+// Audio metadata API: /api/audio?url= (GET) and POST /api/audio.
+app.use("/api/audio", audioRouter);
 
 const MAX_BYTES = 200 * 1024 * 1024;
 
